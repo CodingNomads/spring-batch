@@ -1,4 +1,4 @@
-package com.example.springbatchdemo;
+package com.example.springbatchdemo.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,8 +24,7 @@ public class Employee {
     }
     
     public Employee() {}
-    
-    
+
     public Integer getId() {
         return id;
     }

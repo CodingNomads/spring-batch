@@ -1,5 +1,8 @@
-package com.example.springbatchdemo;
+package com.example.springbatchdemo.config;
 
+import com.example.springbatchdemo.models.Designation;
+import com.example.springbatchdemo.repositories.EmployeeRepository;
+import com.example.springbatchdemo.models.Employee;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -19,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.DeadlockLoserDataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -73,16 +77,16 @@ public class BatchConfiguration {
             return employee;
         }
     }
-    
+
     @Component
     public static class EmployeeWriter implements ItemWriter<Employee> {
-        
+
         @Autowired
         private EmployeeRepository employeeRepository;
-        
+
         @Value("${sleepTime}")
         private Integer SLEEP_TIME;
-        
+
         @Override
         public void write(List<? extends Employee> employees) throws InterruptedException {
             employeeRepository.saveAll(employees);
@@ -90,8 +94,7 @@ public class BatchConfiguration {
             System.out.println("Saved employees: " + employees);
         }
     }
-    
-    
+
     @Bean
     public Step nameStep(StepBuilderFactory stepBuilderFactory, ItemReader<Employee> csvReader, NameProcessor processor, EmployeeWriter writer) {
         return stepBuilderFactory.get("name-step")
@@ -119,6 +122,7 @@ public class BatchConfiguration {
                 .incrementer(new RunIdIncrementer())
                 .start(nameStep)
                 .next(designationStep)
+                .preventRestart()
                 .build();
     }
 }

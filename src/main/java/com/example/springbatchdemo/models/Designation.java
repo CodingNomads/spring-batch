@@ -1,4 +1,4 @@
-package com.example.springbatchdemo;
+package com.example.springbatchdemo.models;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;

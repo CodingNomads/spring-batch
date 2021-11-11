@@ -1,4 +1,4 @@
-package com.example.springbatchdemo;
+package com.example.springbatchdemo.controllers;
 
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -6,6 +6,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,27 +16,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/batch")
 public class BatchController {
-    
+
     @Autowired
     private JobLauncher jobLauncher;
-    
+
     @Autowired
     private Job job;
-    
-    
-    @GetMapping(value = "/testJob")
-    public BatchStatus testJob(@RequestParam(name = "jobId", required = false) String jobId) {
+
+    @GetMapping(value = "/job")
+    public String testJob(@RequestParam(name = "id") String jobId) {
         JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-        if (!StringUtils.isEmpty(jobId)) {
+        if (StringUtils.hasLength(jobId)) {
             jobParametersBuilder.addString("jobId", jobId);
         }
-        JobExecution jobExecution = null;
+        JobExecution jobExecution;
         try {
             jobExecution = jobLauncher.run(job, jobParametersBuilder.toJobParameters());
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             e.printStackTrace();
+            return e.getMessage();
         }
-        
-        return jobExecution != null ? jobExecution.getStatus() : null;
+        return jobExecution.getStatus().name();
     }
 }

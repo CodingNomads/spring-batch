@@ -1,5 +1,6 @@
-package com.example.springbatchdemo;
+package com.example.springbatchdemo.repositories;
 
+import com.example.springbatchdemo.models.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.example.springbatchdemo;
+package com.example.springbatchdemo.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
